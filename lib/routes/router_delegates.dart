@@ -1,4 +1,5 @@
 import 'package:dicoding_intermediate/model/quote.dart';
+import 'package:dicoding_intermediate/screen/form_screen.dart';
 import 'package:dicoding_intermediate/screen/quote_detail_page.dart';
 import 'package:dicoding_intermediate/screen/quote_detail_screen.dart';
 import 'package:dicoding_intermediate/screen/quotes_list_screen.dart';
@@ -9,7 +10,7 @@ class MyRouteDelegate extends RouterDelegate
   final GlobalKey<NavigatorState> _navigatorKey;
   MyRouteDelegate() : _navigatorKey = GlobalKey<NavigatorState>();
   String? selectedQoete;
-
+  bool isForm = false;
   @override
   Widget build(BuildContext context) {
     return Navigator(
@@ -18,6 +19,10 @@ class MyRouteDelegate extends RouterDelegate
         MaterialPage(
           child: QuotesListScreen(
             quotes: quotes,
+            toFormSceen: () {
+              isForm = true;
+              notifyListeners();
+            },
             onTapped: (quoteId) {
               selectedQoete = quoteId;
               notifyListeners();
@@ -33,6 +38,16 @@ class MyRouteDelegate extends RouterDelegate
             child: QuoteDetailsScreen(
               quoteId: selectedQoete!,
             ),
+          ),
+        if (isForm)
+          MaterialPage(
+            key: const ValueKey("FormScreen"),
+            child: FormScreen(
+              onSend: () {
+                isForm = false;
+                notifyListeners();
+              },
+            ),
           )
       ],
       onPopPage: (route, result) {
@@ -42,6 +57,7 @@ class MyRouteDelegate extends RouterDelegate
         }
 
         selectedQoete = null;
+        isForm = false;
         notifyListeners();
 
         return true;
